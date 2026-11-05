@@ -1,0 +1,6 @@
+# Outils portables (gh, jj, mingit) : a retelecharger, voir README
+tools/
+# Bacs a sable recrees par tests/run-all.ps1
+boxes/
+# Version livree, reconstruite par tests/run-all.ps1
+build/
