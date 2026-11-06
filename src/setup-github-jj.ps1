@@ -258,7 +258,6 @@ function Read-CommitName([string]$Default) {
 function New-EmptyState {
     return [pscustomobject]@{
         login = $null; name = $null; email = $null
-        desktopChoice = $null; desktopDone = $false
         stepsDone = @(); completed = $false
     }
 }
@@ -584,10 +583,6 @@ function Invoke-Preflight {
 
     if ($script:NeedInstall) {
         Invoke-WingetCheck
-    } elseif (Test-Tool 'winget') {
-        # winget ne sert plus qu'à l'option GitHub Desktop : son absence n'est pas bloquante.
-        $version = Get-ToolVersion 'winget'
-        $script:WingetReady = ($null -ne $version -and $version -ge $script:WingetMinimum)
     }
 
     if ($script:NeedInstall -and (Test-InstallerRunning)) {
@@ -691,25 +686,6 @@ function Install-Tool($Tool) {
         throw (New-SetupError "E-INTROUVABLE-$($Tool.Command.ToUpper())" "$($Tool.Label) semble installé, mais Windows ne le trouve pas encore." 'Le PC doit peut-être prendre en compte le changement.' "Redémarre le PC, puis relance. Si tu l'as déjà fait, désinstalle $($Tool.Label) depuis Paramètres > Applications, puis relance.")
     }
     Stop-InstallFailed $Tool $code
-}
-
-function Install-Desktop {
-    if ($script:State.desktopDone -or -not $script:WingetReady) { return }
-    if ($null -eq $script:State.desktopChoice) {
-        $script:State.desktopChoice = Read-YesNo 'Installer aussi GitHub Desktop (interface graphique, facultative) ?' $false
-        Save-State
-    }
-    if (-not $script:State.desktopChoice) { return }
-    Write-Info 'Installation de GitHub Desktop...'
-    $result = Invoke-Native 'winget' (Get-WingetCommandLine 'install' 'GitHub.GitHubDesktop' @())
-    if ($result.ExitCode -in $script:WingetSuccessCodes) {
-        Write-Ok 'GitHub Desktop est prêt.'
-        $script:State.desktopDone = $true
-        Save-State
-    } else {
-        $why, $fix = Get-WingetExplanation $result.ExitCode
-        Write-Warn "GitHub Desktop n'a pas été installé : $why $fix Ce n'est pas bloquant, la suite continue."
-    }
 }
 
 # --- Étape 2 : compte GitHub --------------------------------------------------
@@ -1104,9 +1080,6 @@ function Show-DryRunPlan {
             default   { Write-Plan "$($tool.Label) : rien à faire" }
         }
     }
-    if ($script:WingetReady -and -not $script:State.desktopDone) {
-        Write-Plan "Question : installer GitHub Desktop ? Si oui : winget $((Get-WingetCommandLine 'install' 'GitHub.GitHubDesktop' @()) -join ' ')"
-    }
 
     $scopeList = $script:GitHubScopes -join ','
     if (Test-Tool 'gh') {
@@ -1187,7 +1160,6 @@ function Invoke-Main {
 
     Write-Step '1/5 - Installation des logiciels'
     foreach ($tool in $script:Tools) { Install-Tool $tool }
-    Install-Desktop
     Complete-Step 'installation'
 
     Write-Step '2/5 - Compte GitHub'

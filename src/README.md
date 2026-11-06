@@ -19,7 +19,7 @@ Vérifie d'abord que le dossier vient d'une personne de confiance. Ensuite :
 ## Ce que fait le script
 
 1. **Vérifie la machine** : version de Windows, compte, espace disque, internet et winget. Si quelque chose bloque, il l'explique et s'arrête avant toute installation.
-2. **Installe** Git, GitHub CLI et Jujutsu avec winget, et propose GitHub Desktop en option. Avec un compte administrateur, Windows peut demander de cliquer sur « Oui ». Avec un compte standard, ou si tu refuses, les logiciels sont installés pour ce compte uniquement. En continuant, tu acceptes leurs licences.
+2. **Installe** Git, GitHub CLI et Jujutsu avec winget. Avec un compte administrateur, Windows peut demander de cliquer sur « Oui ». Avec un compte standard, ou si tu refuses, les logiciels sont installés pour ce compte uniquement. En continuant, tu acceptes leurs licences.
 3. **Ouvre la page d'inscription GitHub** si tu n'as pas de compte. L'inscription se fait à la main : GitHub interdit les comptes créés par un script et autorise un seul compte gratuit par personne.
 4. **Connecte ton compte** dans le navigateur. Tu n'as aucun mot de passe à taper dans la fenêtre du script.
 5. **Récupère tes infos** et écrit dans `~\github-compte.json` : login, id, nom, adresse du profil et e-mail choisi pour les commits.
