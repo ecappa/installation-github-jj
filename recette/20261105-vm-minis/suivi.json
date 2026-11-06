@@ -56,17 +56,17 @@
    "id": "e7",
    "nom": "Corrections et commit",
    "lot": "",
-   "detail": "",
-   "etat": "cours",
-   "heure": "21:02"
+   "detail": "785682d + 9141bc1 poussés sur origin/main ; revue GLM OK (Grok à court de crédit)",
+   "etat": "fait",
+   "heure": "21:13"
   },
   {
    "id": "e8",
    "nom": "Restauration du snapshot",
    "lot": "",
-   "detail": "",
-   "etat": "a-faire",
-   "heure": ""
+   "detail": "Snapshot 20261105-avant-github-jj restauré, cmp identique, VM redémarrée",
+   "etat": "fait",
+   "heure": "21:18"
   }
  ],
  "bloquants": [],
@@ -92,6 +92,12 @@
   {
    "heure": "21:02",
    "texte": "Installeur TERMINÉ : git 2.56, gh 2.103.3, jj 0.46, push jj vérifié sur GitHub",
+   "type": "ok",
+   "important": false
+  },
+  {
+   "heure": "21:18",
+   "texte": "Revues Codex et Claude : OK sur le périmètre",
    "type": "ok",
    "important": false
   }
