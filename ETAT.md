@@ -7,7 +7,7 @@ branche: main
 mis_a_jour: 2026-11-06 09:35
 statut: pret-a-reprendre
 tache: t_1a1ae3b56e45e23e1e5
-prochaine_action: Rendre le dépôt public (ou héberger install.ps1 ailleurs) pour que irm | iex marche, sur décision d'Éric
+prochaine_action: Inviter Marcelle sur ecappa/groupe-ch-plateforme-donnees dès réception de son identifiant GitHub ; suivre les premiers lancements de l'équipe
 ---
 
 # État - installeur Git/GitHub CLI/jj
@@ -42,7 +42,7 @@ marche qu'une fois le dépôt public ou le fichier hébergé ailleurs. La VM `ec
 - `tests/run-all.ps1` introuvable (ni Mac, ni minis, ni VM) : aucun test automatique relançable.
 
 ## Reste à faire
-1. Décision d'Éric : rendre `ecappa/installation-github-jj` public, ou héberger `install.ps1` + `src/setup-github-jj.ps1` ailleurs.
+1. Fait le 2026-11-06 : dépôt public, ligne irm vérifiée en VM depuis l'URL publique, instructions envoyées à Danny, Marcelle et Étienne (fil Gmail pro 1a1b181629822280). Reste : inviter Marcelle dès son identifiant GitHub.
 2. Une fois public : restaurer le snapshot propre, vraie installation par `irm | iex` avec le compte de test, puis restaurer.
 3. Place sur minis : supprimer l'ancien snapshot `20261105-avant-github-jj` si Éric l'accepte.
 
