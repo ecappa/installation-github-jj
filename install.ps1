@@ -21,10 +21,14 @@ function Start-InstallationGitHubJJ([switch]$DryRun, [switch]$Reset) {
     } catch { }
 
     $base = 'https://raw.githubusercontent.com/ecappa/installation-github-jj/main/src'
-    if ($env:INSTALLATION_GITHUB_JJ_URL) { $base = $env:INSTALLATION_GITHUB_JJ_URL.TrimEnd('/') }
+    if ($env:INSTALLATION_GITHUB_JJ_URL) {
+        $base = $env:INSTALLATION_GITHUB_JJ_URL.TrimEnd('/')
+        Write-Host "Adresse remplacee par INSTALLATION_GITHUB_JJ_URL : $base" -ForegroundColor Yellow
+    }
     $appDir = Join-Path $env:LOCALAPPDATA 'InstallationGitHubJJ'
     $scriptDir = Join-Path $appDir 'script'
-    $target = Join-Path $scriptDir 'setup-github-jj.ps1'
+    # Un fichier par lancement : deux fenetres ouvertes en meme temps ne s'ecrasent pas le script.
+    $target = Join-Path $scriptDir ('setup-github-jj-{0}.ps1' -f $PID)
     $marker = Join-Path $appDir 'fin-du-script.txt'
     $logs = Join-Path $appDir 'journaux'
     $ps = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
@@ -36,8 +40,12 @@ function Start-InstallationGitHubJJ([switch]$DryRun, [switch]$Reset) {
         # Decodage strict : un fichier coupe ou une page d'erreur ne doit pas etre lance.
         $text = (New-Object Text.UTF8Encoding($false, $true)).GetString($bytes)
         if ($text.Length -gt 0 -and $text[0] -eq [char]0xFEFF) { $text = $text.Substring(1) }
-        if (-not $text.StartsWith('<#') -or $text -notmatch 'function Invoke-Main') { throw 'contenu inattendu' }
+        if (-not $text.StartsWith('<#') -or $text -notmatch 'function Invoke-Main' -or $text.TrimEnd() -notmatch 'exit \$script:ExitCode$') {
+            throw 'contenu inattendu ou incomplet'
+        }
         New-Item -ItemType Directory -Force -Path $scriptDir -ErrorAction Stop | Out-Null
+        Get-ChildItem $scriptDir -Filter 'setup-github-jj*.ps1' -ErrorAction SilentlyContinue |
+            Where-Object { $_.LastWriteTime -lt (Get-Date).AddDays(-1) } | Remove-Item -Force -ErrorAction SilentlyContinue
         $text = $text -replace "`r?`n", "`r`n"
         [IO.File]::WriteAllText($target, $text, (New-Object Text.UTF8Encoding($true)))
     } catch {
@@ -60,6 +68,7 @@ function Start-InstallationGitHubJJ([switch]$DryRun, [switch]$Reset) {
         $code = $LASTEXITCODE
     } finally {
         $env:INSTALLATION_GITHUB_JJ_LANCEUR = $previous
+        Remove-Item $target -Force -ErrorAction SilentlyContinue
     }
 
     # Memes regles qu'Installer.cmd : sans le fichier de fin, le script n'est pas alle au bout.

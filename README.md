@@ -17,7 +17,7 @@ Dans Windows PowerShell, sans « Executer en tant qu'administrateur » :
 irm https://raw.githubusercontent.com/ecappa/installation-github-jj/main/install.ps1 | iex
 ```
 
-`install.ps1` telecharge `src/setup-github-jj.ps1` dans `%LOCALAPPDATA%\InstallationGitHubJJ\script\`, l'enregistre en UTF-8 avec BOM et le lance dans un processus a part, comme `Installer.cmd`. Il marche meme avec la politique d'execution `Restricted`. Essai a blanc :
+`install.ps1` telecharge `src/setup-github-jj.ps1`, verifie qu'il est complet, l'enregistre dans `%LOCALAPPDATA%\InstallationGitHubJJ\script\` (un fichier par lancement, efface a la fin) en UTF-8 avec BOM et le lance dans un processus a part, comme `Installer.cmd`. Il marche meme avec la politique d'execution `Restricted`. Essai a blanc :
 
 ```powershell
 & ([scriptblock]::Create((irm https://raw.githubusercontent.com/ecappa/installation-github-jj/main/install.ps1))) -DryRun

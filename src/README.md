@@ -38,7 +38,7 @@ Vérifie d'abord que le dossier vient d'une personne de confiance. Ensuite :
 
 ## Si ça plante
 
-Relance `Installer.cmd`. Le script revérifie les étapes déjà faites et te propose de garder tes réponses. Chaque erreur indique ce qui s'est passé, pourquoi, quoi faire et un code.
+Relance de la même façon : colle à nouveau la ligne dans PowerShell, ou double-clique sur `Installer.cmd` si tu as copié le dossier. Le script revérifie les étapes déjà faites et te propose de garder tes réponses. Chaque erreur indique ce qui s'est passé, pourquoi, quoi faire et un code.
 
 | Fichier | Emplacement |
 |---|---|
@@ -62,7 +62,7 @@ Si tu demandes de l'aide, envoie le code de l'erreur et le dernier journal. Il n
   jj abandon
   ```
 
-- **PC géré par une entreprise :** une règle de sécurité peut bloquer le script malgré `Installer.cmd`. Dans ce cas, contacte ton service informatique.
+- **PC géré par une entreprise :** une règle de sécurité peut bloquer le script, avec `Installer.cmd` comme avec la ligne à coller. Dans ce cas, contacte ton service informatique.
 
 ## Options
 
