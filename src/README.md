@@ -8,6 +8,16 @@
 
 Il faut une connexion internet. Compte 5 à 10 minutes.
 
+### Sans copier de dossier
+
+Ouvre Windows PowerShell (menu Démarrer, tape « PowerShell », sans « Exécuter en tant qu'administrateur »), colle cette ligne, puis Entrée :
+
+```powershell
+irm https://raw.githubusercontent.com/ecappa/installation-github-jj/main/install.ps1 | iex
+```
+
+La suite est la même qu'avec `Installer.cmd`. Pour relancer, colle à nouveau la même ligne.
+
 ### Si Windows bloque le fichier
 
 Vérifie d'abord que le dossier vient d'une personne de confiance. Ensuite :

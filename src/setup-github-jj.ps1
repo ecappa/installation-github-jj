@@ -48,6 +48,8 @@ $script:GitHubScopes  = @('user:email', 'workflow')
 $script:WingetMinimum = [version]'1.6'
 $script:WingetAgreements = @('--accept-package-agreements', '--accept-source-agreements')
 $script:StoreAppInstallerUrl = 'https://apps.microsoft.com/detail/9nblggh4nns1'
+# install.ps1 (lancement par « irm ... | iex ») pose cette variable : les messages de relance en tiennent compte.
+$script:RelaunchHint = if ($env:INSTALLATION_GITHUB_JJ_LANCEUR -eq 'commande') { 'relance la commande d''installation dans PowerShell' } else { 'double-clique à nouveau sur Installer.cmd' }
 
 $script:WingetLinkDirs = @(
     (Join-Path $env:LOCALAPPDATA 'Microsoft\WinGet\Links'),
@@ -363,7 +365,13 @@ function Read-AccountRights {
     $result = Invoke-Native 'whoami' @('/groups', '/fo', 'csv') -Private
     $script:IsAdminAccount = ($result.ExitCode -ne 0 -or $result.Text -match 'S-1-5-32-544')
     $script:IsElevated = ($result.ExitCode -eq 0 -and $result.Text -match 'S-1-16-12288')
-    Write-Log 'INFO' "Compte administrateur : $script:IsAdminAccount. Fenêtre élevée : $script:IsElevated"
+    # UAC désactivé (EnableLUA = 0) : un compte administrateur a toujours une fenêtre élevée, sans l'avoir demandé.
+    $script:UacOff = $false
+    try {
+        $lua = Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System' -Name 'EnableLUA' -ErrorAction Stop
+        $script:UacOff = ($null -ne $lua.EnableLUA -and [int]$lua.EnableLUA -eq 0)
+    } catch { }
+    Write-Log 'INFO' "Compte administrateur : $script:IsAdminAccount. Fenêtre élevée : $script:IsElevated. UAC désactivé : $script:UacOff"
 }
 
 function Get-SessionOwner {
@@ -421,9 +429,9 @@ function Get-TokenFix([string]$Variable, [bool]$InUser, [bool]$InMachine) {
         return "$Variable est réglée pour tout le PC : demande à ton service informatique ou à la personne qui t'aide de la retirer."
     }
     if ($InUser) {
-        return "Si elle sert à un autre outil, demande d'abord à la personne qui t'aide. Sinon : menu Démarrer, tape « variables d'environnement », ouvre « Modifier les variables d'environnement pour votre compte », sélectionne $Variable, clique sur Supprimer puis OK. Double-clique ensuite à nouveau sur Installer.cmd."
+        return "Si elle sert à un autre outil, demande d'abord à la personne qui t'aide. Sinon : menu Démarrer, tape « variables d'environnement », ouvre « Modifier les variables d'environnement pour votre compte », sélectionne $Variable, clique sur Supprimer puis OK. Ensuite, $script:RelaunchHint."
     }
-    return "$Variable n'existe que dans cette fenêtre : ferme-la et double-clique à nouveau sur Installer.cmd."
+    return "$Variable n'existe que dans cette fenêtre : ferme-la et $script:RelaunchHint."
 }
 
 # --- Étape 0 : vérifications avant de commencer -------------------------------
@@ -450,7 +458,6 @@ function Add-WingetVersionCheck {
         $script:StoreUrlNeeded = $true
         Add-Check 'STOP' 'Installateur winget' "version $version trop ancienne (il faut au moins $script:WingetMinimum)" "Mets à jour « App Installer » ($script:StoreAppInstallerUrl), puis relance. $noStore" 'E-PRE-WINGET'
     } else {
-        $script:WingetReady = $true
         Add-Check 'OK' 'Installateur winget' "version $version" ''
     }
 }
@@ -495,7 +502,6 @@ function Show-BlockingChecks([string]$Summary) {
 function Invoke-Preflight {
     Write-Step 'Vérification de la machine (rien n''est modifié)'
     $script:Checks = @()
-    $script:WingetReady = $false
     $script:WingetToActivate = $false
     $script:StoreUrlNeeded = $false
 
@@ -515,14 +521,14 @@ function Invoke-Preflight {
     $identity = ([Security.Principal.WindowsIdentity]::GetCurrent().Name -split '\\')[-1]
     $sessionOwner = Get-SessionOwner
     if ($sessionOwner -and $sessionOwner -ne $identity) {
-        Add-Check 'STOP' 'Compte Windows' "le script tourne sous « $identity » alors que la session ouverte est celle de « $sessionOwner »" 'Ferme cette fenêtre et double-clique sur Installer.cmd, sans « Exécuter en tant qu''administrateur » : sinon la connexion GitHub irait sur le mauvais compte.' 'E-PRE-COMPTE'
+        Add-Check 'STOP' 'Compte Windows' "le script tourne sous « $identity » alors que la session ouverte est celle de « $sessionOwner »" "Ferme cette fenêtre et $script:RelaunchHint, sans « Exécuter en tant qu'administrateur » : sinon la connexion GitHub irait sur le mauvais compte." 'E-PRE-COMPTE'
     } else {
         Add-Check 'OK' 'Compte Windows' $identity ''
     }
 
     Read-AccountRights
-    if ($script:IsElevated) {
-        Add-Check 'WARN' 'Fenêtre administrateur' 'le script a été lancé « en tant qu''administrateur », ce n''est pas recommandé' 'Si possible, ferme cette fenêtre et double-clique simplement sur Installer.cmd.'
+    if ($script:IsElevated -and -not $script:UacOff) {
+        Add-Check 'WARN' 'Fenêtre administrateur' 'le script a été lancé « en tant qu''administrateur », ce n''est pas recommandé' "Si possible, ferme cette fenêtre et $script:RelaunchHint."
     }
     if ($script:IsAdminAccount) {
         Add-Check 'OK' 'Droits' 'compte administrateur : Windows demandera peut-être de cliquer sur « Oui »' ''
