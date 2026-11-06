@@ -4,3 +4,7 @@ tools/
 boxes/
 # Version livree, reconstruite par tests/run-all.ps1
 build/
+# Fichiers de travail du tableau de suivi
+recette/*/suivi.lock
+recette/*/suivi.log
+recette/*/suivi.pid

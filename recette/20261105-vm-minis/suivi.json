@@ -1,0 +1,101 @@
+{
+ "titre": "Installation GitHub + jj : premier vrai lancement",
+ "meta": "Tâche t_1a1ae3b56e45e23e1e5 - VM ecosai-win sur minis",
+ "run": null,
+ "maintenant": "Étape 2/5 : Éric se connecte à GitHub dans la VM.",
+ "etapes": [
+  {
+   "id": "e1",
+   "nom": "Clone et lecture",
+   "lot": "",
+   "detail": "Clone dans ~/devRoot/cappasoft/rnd ; tests/run-all.ps1 absent du dépôt",
+   "etat": "fait",
+   "heure": "19:21"
+  },
+  {
+   "id": "e2",
+   "nom": "Snapshot de la VM",
+   "lot": "",
+   "detail": "~/vms/ecosai-win/snapshots/20261105-avant-github-jj, cmp identique",
+   "etat": "fait",
+   "heure": "19:23"
+  },
+  {
+   "id": "e3",
+   "nom": "Préparation dans Windows",
+   "lot": "",
+   "detail": "Copie sur le bureau, UAC désactivé dans la VM (EnableLUA=0)",
+   "etat": "fait",
+   "heure": "19:25"
+  },
+  {
+   "id": "e4",
+   "nom": "Lancement Installer.cmd",
+   "lot": "",
+   "detail": "Git, gh, jj installés par winget ; GitHub Desktop refusé (option retirée du code)",
+   "etat": "fait",
+   "heure": "19:42"
+  },
+  {
+   "id": "e5",
+   "nom": "Connexion GitHub",
+   "lot": "",
+   "detail": "Compte cappasoft-test-jj, 1er code expiré, la relance de l'installeur a marché",
+   "etat": "fait",
+   "heure": "21:02"
+  },
+  {
+   "id": "e6",
+   "nom": "Vérifications finales",
+   "lot": "",
+   "detail": "5/5 OK ; gh repo create + jj git clone + jj git push vérifiés, commit 210140d",
+   "etat": "fait",
+   "heure": "21:02"
+  },
+  {
+   "id": "e7",
+   "nom": "Corrections et commit",
+   "lot": "",
+   "detail": "",
+   "etat": "cours",
+   "heure": "21:02"
+  },
+  {
+   "id": "e8",
+   "nom": "Restauration du snapshot",
+   "lot": "",
+   "detail": "",
+   "etat": "a-faire",
+   "heure": ""
+  }
+ ],
+ "bloquants": [],
+ "journal": [
+  {
+   "heure": "19:23",
+   "texte": "Snapshot de la VM : data.img identique (cmp), 25 Go, 44 Go libres sur minis",
+   "type": "ok",
+   "important": true
+  },
+  {
+   "heure": "19:30",
+   "texte": "Collision : EcoSai lancé à 19 h 25 dans la VM par un autre agent, message envoyé à term_88c5b38f",
+   "type": "ko",
+   "important": true
+  },
+  {
+   "heure": "19:42",
+   "texte": "Décision attendue d'Éric : Éric : se connecter à GitHub (ecappa) dans l'onglet de la VM, code DF0C-506E",
+   "type": "decision",
+   "important": true
+  },
+  {
+   "heure": "21:02",
+   "texte": "Installeur TERMINÉ : git 2.56, gh 2.103.3, jj 0.46, push jj vérifié sur GitHub",
+   "type": "ok",
+   "important": false
+  }
+ ],
+ "browserPageId": "07ab0b88-fc7b-49c1-b0ab-90a4181b598e",
+ "worktree": null
+}
